@@ -75,7 +75,7 @@ function limitUsedCpu {
 ##########################################################################################################
 function cleanBuild {
     dialog_clean_build=$(dialog --yesno "delete build folder beforehand?" 10 40)
-    if [ "$dialog_clean_build" -eq "0"] 
+    if [ "$dialog_clean_build" -eq "0" ] 
     then
         clearBuild=true
     fi
@@ -100,8 +100,8 @@ function showFeature {
     fi
 
     #~ xmessage -buttons "Passt":0,"Abbruch":1 -default "Abbruch" -nearmouse "Target: $target$msgPrivApp$msgParamPatch. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild"
-    dialog_continue=$(dialog --yesno --title "Continue?" "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild" 10 40)
-    if [ "$dialog_continue" -eq "1"] 
+    dialog_continue=$(dialog  --title "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild" --yesno "Continue?" 10 40)
+    if [ "$dialog_continue" -eq "1" ] 
     then
         exit
     fi
@@ -155,15 +155,15 @@ function newPatchesAvailable {
     fi    
 
     if [ $LOCAL = $REMOTE ]; then
-        dialog_build_anyway=$(dialog --yesno --title "Build anyway?" "no new patches available" 10 40)
-        if [ "$dialog_build_anyway" -eq "1"] 
+        dialog_build_anyway=$(dialog  --title  "no new patches available" --yesno "Build anyway?" 10 40)
+        if [ "$dialog_build_anyway" -eq "1" ] 
         then
             echo - Beenden
             exit
         fi
     else
-        dialog_build_anyway=$(dialog --yesno --title "Build?" "new patches available" 10 40)
-        if [ "$dialog_build_anyway" -eq "1"]
+        dialog_build_anyway=$(dialog --title "new patches available"  --yesno "Build?"  10 40)
+        if [ "$dialog_build_anyway" -eq "1" ]
         then
             echo - Beenden
             exit
