@@ -47,8 +47,8 @@ kernel=msm8976
 # details               Auswahl des zu bauenden Bq Targets
 ##########################################################################################################
 function getTarget {
-    xmessage -buttons "gohan":0,"tenshi":1 -default "gohan" -nearmouse "Target auswaehlen"
-    if [ $? = 1 ] 
+    dialog_target=$(dialog --clear --radiolist "choose target:" 10 40 3 1 "gohan" on 2 "tenshi" off)
+    if [ $dialog_cpu_limit -eq "2" ] 
     then
         target=tenshi
         kernel=msm8937
@@ -62,8 +62,8 @@ function getTarget {
 # details               weitere Apps
 ##########################################################################################################
 function limitUsedCpu {
-    xmessage -buttons "Nein":0,"Ja":1 -default "Nein" -nearmouse "Anzahl der Prozessoren begrenzen?"
-    if [ $? = 1 ] 
+    dialog_cpu_limit=$(dialog --yesno "limit cpu number of cores used?" 10 40)
+    if [ "$dialog_cpu_limit" -eq "0" ]
     then
         limitCpu=true
     fi
@@ -74,8 +74,8 @@ function limitUsedCpu {
 # details               weitere Apps
 ##########################################################################################################
 function cleanBuild {
-    xmessage -buttons "Nein":0,"Ja":1 -default "Nein" -nearmouse "Den Build Ordner vorher loeschen?"
-    if [ $? = 1 ] 
+    dialog_clean_build=$(dialog --yesno "delete build folder beforehand?" 10 40)
+    if [ "$dialog_clean_build" -eq "0"] 
     then
         clearBuild=true
     fi
@@ -100,8 +100,8 @@ function showFeature {
     fi
 
     #~ xmessage -buttons "Passt":0,"Abbruch":1 -default "Abbruch" -nearmouse "Target: $target$msgPrivApp$msgParamPatch. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild"
-    xmessage -buttons "Passt":0,"Abbruch":1 -default "Abbruch" -nearmouse "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild"
-    if [ $? = 1 ] 
+    dialog_continue=$(dialog --yesno --title "Continue?" "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild" 10 40)
+    if [ "$dialog_continue" -eq "1"] 
     then
         exit
     fi
@@ -155,15 +155,15 @@ function newPatchesAvailable {
     fi    
 
     if [ $LOCAL = $REMOTE ]; then
-        xmessage -buttons "Trotzdem bauen":0,"Beenden":1 -default "Beenden" -nearmouse "Keine neuen Patches vorhanden"
-        if [ $? = 1 ] 
+        dialog_build_anyway=$(dialog --yesno --title "Build anyway?" "no new patches available" 10 40)
+        if [ "$dialog_build_anyway" -eq "1"] 
         then
             echo - Beenden
             exit
         fi
     else
-        xmessage -buttons "Build!":0,"Beenden":1 -default "Beenden" -nearmouse "Neue Patches vorhanden"
-        if [ $? = 1 ] 
+        dialog_build_anyway=$(dialog --yesno --title "Build?" "new patches available" 10 40)
+        if [ "$dialog_build_anyway" -eq "1"]
         then
             echo - Beenden
             exit
