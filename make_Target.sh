@@ -62,7 +62,7 @@ function getTarget {
 # details               weitere Apps
 ##########################################################################################################
 function limitUsedCpu {
-    dialog --clear --yesno "limit cpu number of cores used?" 10 40
+    dialog --stdout --clear --yesno "limit cpu number of cores used?" 10 40
     if [ $? = 0 ]
     then
         limitCpu=true
@@ -100,7 +100,7 @@ function showFeature {
     fi
 
     #~ xmessage -buttons "Passt":0,"Abbruch":1 -default "Abbruch" -nearmouse "Target: $target$msgPrivApp$msgParamPatch. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild"
-    dialog --clear --title "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild" --yesno "Continue?" 10 40
+    dialog --stdout --clear --title "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild" --yesno "Continue?" 10 40
     if [ $? = 1 ] 
     then
         exit
@@ -112,7 +112,7 @@ function showFeature {
 # details               Beenden
 ##########################################################################################################
 function quit {
-    dialog --msgbox "$1 schlug fehl" 10 40
+    dialog --stdout --msgbox "$1 schlug fehl" 10 40
     exit
 }
 
@@ -123,7 +123,7 @@ function quit {
 function securityPatchDate {
     #grep "PLATFORM_SECURITY_PATCH := " ./build/core/version_defaults.mk 
     LOCAL=$(grep -Eoi "PLATFORM_SECURITY_PATCH := .*" ./build/core/version_defaults.mk | sed  s@'PLATFORM_SECURITY_PATCH := '@''@)
-    dialog --title "Patch Date" --msgbox "Security Patch Level lokal vom  : $LOCAL" 10 40
+    dialog --stdout --title "Patch Date" --msgbox "Security Patch Level lokal vom  : $LOCAL" 10 40
 }
 
 ##########################################################################################################
@@ -134,34 +134,34 @@ function newPatchesAvailable {
     LOCAL=$(grep -Eoi "PLATFORM_SECURITY_PATCH := .*" ./build/core/version_defaults.mk | sed  s@'PLATFORM_SECURITY_PATCH := '@''@)
     REMOTE=$(curl -sS https://github.com/LineageOS/android_build/blob/cm-14.1/core/version_defaults.mk | grep -Eoi 'PLATFORM_SECURITY_PATCH</span> := [0-9]{4}-[0-9]{2}-[0-9]{2}' | sed  s@'PLATFORM_SECURITY_PATCH</span> := '@''@)
 
-    dialog --title "Security Patches" --msgbox "Security Patch Level lokal vom: $LOCAL \
+    dialog --stdout --title "Security Patches" --msgbox "Security Patch Level lokal vom: $LOCAL \
     \n\nSecurity Patch Level remote vom: $REMOTE" 10 40
 
     
     # wenn laenge = 0 keine verbindung zum server
     if [ ${#REMOTE} = 0 ]
     then
-        dialog --msgbox "Keine Verbindung zum Server" 10 40
+        dialog --stdout --msgbox "Keine Verbindung zum Server" 10 40
         exit
     fi    
     if [ ${#LOCAL} = 0 ] 
     then
-        dialog --msgbox "Kein Repo gefunden, starte sync" 10 40
+        dialog --stdout --msgbox "Kein Repo gefunden, starte sync" 10 40
         return
     fi    
 
     if [ $LOCAL = $REMOTE ]; then
-        dialog --clear --title  "no new patches available" --yesno "Build anyway?" 10 40
+        dialog --stdout --clear --title  "no new patches available" --yesno "Build anyway?" 10 40
         if [ $? = 1 ] 
         then
-            dialog --msgbox "Beenden" 10 40
+            dialog --stdout --msgbox "Beenden" 10 40
             exit
         fi
     else
-        dialog --clear --title "new patches available"  --yesno "Build?"  10 40
+        dialog --stdout --clear --title "new patches available"  --yesno "Build?"  10 40
         if [ $? = 1 ]
         then
-            dialog --msgbox "Beenden" 10 40
+            dialog --stdout --msgbox "Beenden" 10 40
             exit
         fi
     fi
