@@ -26,7 +26,7 @@
 buildDate=$(date +%Y%m%d)
 
 #RootPfad=/media/lta-user/Backup
-RootPfad=$PWD
+RootPfad=~
 CertPfad=/media/lta-user/Backup
 limitCpu=false
 clearBuild=false
@@ -47,8 +47,8 @@ kernel=msm8976
 # details               Auswahl des zu bauenden Bq Targets
 ##########################################################################################################
 function getTarget {
-    dialog --clear --radiolist "choose target:" 10 40 3 1 "gohan" on 2 "tenshi" off
-    if [ $? = 2 ] 
+    auswahl=$(dialog --stdout --clear --radiolist "choose target:" 10 40 3 1 "gohan" on 2 "tenshi" off)
+    if [ $auswahl -eq "2" ] 
     then
         target=tenshi
         kernel=msm8937
@@ -112,7 +112,7 @@ function showFeature {
 # details               Beenden
 ##########################################################################################################
 function quit {
-    echo - $1 & "  schlug fehl"
+    dialog --msgbox "$1 schlug fehl" 10 40
     exit
 }
 
@@ -121,12 +121,9 @@ function quit {
 # details               der PatchStand auf der Platte
 ##########################################################################################################
 function securityPatchDate {
-    echo "+++++++++++++++++++++++++++++++++++ Patch Datum +++++++++++++++++++++++++++++++++++++++++++++++++"
-    echo
     #grep "PLATFORM_SECURITY_PATCH := " ./build/core/version_defaults.mk 
     LOCAL=$(grep -Eoi "PLATFORM_SECURITY_PATCH := .*" ./build/core/version_defaults.mk | sed  s@'PLATFORM_SECURITY_PATCH := '@''@)
-    echo -  Security Patch Level lokal vom  : $LOCAL
-    echo
+    dialog --title "Patch Date" --msgbox "Security Patch Level lokal vom  : $LOCAL" 10 40
 }
 
 ##########################################################################################################
@@ -134,23 +131,22 @@ function securityPatchDate {
 # details               gibts einen neueren PatchStand
 ##########################################################################################################
 function newPatchesAvailable {
-    echo "+++++++++++++++++++++++++++++++++++ Security Patches ++++++++++++++++++++++++++++++++++++++++++++++++"
-    echo
     LOCAL=$(grep -Eoi "PLATFORM_SECURITY_PATCH := .*" ./build/core/version_defaults.mk | sed  s@'PLATFORM_SECURITY_PATCH := '@''@)
     REMOTE=$(curl -sS https://github.com/LineageOS/android_build/blob/cm-14.1/core/version_defaults.mk | grep -Eoi 'PLATFORM_SECURITY_PATCH</span> := [0-9]{4}-[0-9]{2}-[0-9]{2}' | sed  s@'PLATFORM_SECURITY_PATCH</span> := '@''@)
 
-    echo - Security Patch Level lokal vom  : $LOCAL
-    echo - Security Patch Level remote vom: $REMOTE    
+    dialog --title "Security Patches" --msgbox "Security Patch Level lokal vom: $LOCAL \
+    \n\nSecurity Patch Level remote vom: $REMOTE" 10 40
+
     
     # wenn laenge = 0 keine verbindung zum server
     if [ ${#REMOTE} = 0 ]
     then
-        echo - Keine Verbindung zum Server
+        dialog --msgbox "Keine Verbindung zum Server" 10 40
         exit
     fi    
     if [ ${#LOCAL} = 0 ] 
     then
-        echo - Kein Repo gefunden, starte sync
+        dialog --msgbox "Kein Repo gefunden, starte sync" 10 40
         return
     fi    
 
@@ -158,14 +154,14 @@ function newPatchesAvailable {
         dialog --clear --title  "no new patches available" --yesno "Build anyway?" 10 40
         if [ $? = 1 ] 
         then
-            echo - Beenden
+            dialog --msgbox "Beenden" 10 40
             exit
         fi
     else
         dialog --clear --title "new patches available"  --yesno "Build?"  10 40
         if [ $? = 1 ]
         then
-            echo - Beenden
+            dialog --msgbox "Beenden" 10 40
             exit
         fi
     fi
