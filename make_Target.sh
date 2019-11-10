@@ -47,8 +47,8 @@ kernel=msm8976
 # details               Auswahl des zu bauenden Bq Targets
 ##########################################################################################################
 function getTarget {
-    dialog_target=$(dialog --clear --radiolist "choose target:" 10 40 3 1 "gohan" on 2 "tenshi" off)
-    if [ $dialog_cpu_limit -eq "2" ] 
+    dialog --clear --radiolist "choose target:" 10 40 3 1 "gohan" on 2 "tenshi" off
+    if [ $? = 2 ] 
     then
         target=tenshi
         kernel=msm8937
@@ -62,8 +62,8 @@ function getTarget {
 # details               weitere Apps
 ##########################################################################################################
 function limitUsedCpu {
-    dialog_cpu_limit=$(dialog --yesno "limit cpu number of cores used?" 10 40)
-    if [ "$dialog_cpu_limit" -eq "0" ]
+    dialog --clear --yesno "limit cpu number of cores used?" 10 40
+    if [ $? = 0 ]
     then
         limitCpu=true
     fi
@@ -74,8 +74,8 @@ function limitUsedCpu {
 # details               weitere Apps
 ##########################################################################################################
 function cleanBuild {
-    dialog_clean_build=$(dialog --yesno "delete build folder beforehand?" 10 40)
-    if [ "$dialog_clean_build" -eq "0" ] 
+    dialog -clear --yesno "delete build folder beforehand?" 10 40
+    if [ $? = 0 ] 
     then
         clearBuild=true
     fi
@@ -100,8 +100,8 @@ function showFeature {
     fi
 
     #~ xmessage -buttons "Passt":0,"Abbruch":1 -default "Abbruch" -nearmouse "Target: $target$msgPrivApp$msgParamPatch. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild"
-    dialog_continue=$(dialog  --title "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild" --yesno "Continue?" 10 40)
-    if [ "$dialog_continue" -eq "1" ] 
+    dialog --clear --title "Target: $target. Prozessorzahl $msgCpu, Buildverzeichnis $msgBuild" --yesno "Continue?" 10 40
+    if [ $? = 1 ] 
     then
         exit
     fi
@@ -155,15 +155,15 @@ function newPatchesAvailable {
     fi    
 
     if [ $LOCAL = $REMOTE ]; then
-        dialog_build_anyway=$(dialog  --title  "no new patches available" --yesno "Build anyway?" 10 40)
-        if [ "$dialog_build_anyway" -eq "1" ] 
+        dialog --clear --title  "no new patches available" --yesno "Build anyway?" 10 40
+        if [ $? = 1 ] 
         then
             echo - Beenden
             exit
         fi
     else
-        dialog_build_anyway=$(dialog --title "new patches available"  --yesno "Build?"  10 40)
-        if [ "$dialog_build_anyway" -eq "1" ]
+        dialog --clear --title "new patches available"  --yesno "Build?"  10 40
+        if [ $? = 1 ]
         then
             echo - Beenden
             exit
@@ -191,7 +191,7 @@ function prepCache {
     # Cache Einstellungen
     export USE_CCACHE=1
     #ccache -M 75G
-    export CCACHE_COMPRESS=1
+    #export CCACHE_COMPRESS=1
     export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4G"
     echo
 }
